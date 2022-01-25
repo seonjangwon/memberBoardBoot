@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script>
+    function emailCh(){
+        const email = document.getElementById('memberEmail').value;
+        const form = document.getElementById('save_form')
+        $.ajax({
+           type:'post',
+           url:'/member/emailch',
+            data:{"memberEmail": email},
+            dataType:'text',
+            success: function (result){
+               console.log(result);
+               if(result ==="ok"){
+                   form.submit();
+               }else {
+                   alert("중복 이메일 입니다!");
+               }
+
+            },
+            error: function () {
+               alert("실패!");
+            },
+        });
+
+    }
+</script>
+</head>
+<body>
+<h2>save</h2>
+<form action="/member/save" method="post" id="save_form" enctype="multipart/form-data" th:object="${member}">
+    <input type="text" th:field="*{memberEmail}" placeholder="이메일"><br>
+    <p th:if="${#fields.hasErrors('memberEmail')}" th:errors="*{memberEmail}" th:errorclass="field-error"></p>
+    <input type="text" th:field="*{memberPassword}" placeholder="비밀번호"><br>
+    <p th:if="${#fields.hasErrors('memberPassword')}" th:errors="*{memberPassword}" th:errorclass="field-error"></p>
+    <input type="text" th:field="*{memberName}" placeholder="이름"><br>
+    <p th:if="${#fields.hasErrors('memberName')}" th:errors="*{memberName}" th:errorclass="field-error"></p>
+    <input type="text" th:field="*{memberPhone}" placeholder="전화번호"><br>
+    <p th:if="${#fields.hasErrors('memberPhone')}" th:errors="*{memberPhone}" th:errorclass="field-error"></p>
+    <input type="file" th:field="*{memberFile}"><br>
+</form>
+<button onclick="emailCh()">가입하기</button>
+</body>
+</html>

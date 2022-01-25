@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<style>
+    .field_error{
+        color: red;
+    }
+</style>
+</head>
+<body>
+<h2>login</h2>
+<form action="/member/login" method="post" th:object="${member}">
+    <input type="hidden" name="URL" th:value="${URL}">
+    <div th:if="${#fields.hasGlobalErrors()}">
+        <p class="field_error" th:each="err : ${#fields.globalErrors()}" th:text="${err}" >글로벌오류자리</p>
+    </div>
+    <input type="text" th:field="*{memberEmail}" placeholder="이메일"><br>
+    <input type="text" th:field="*{memberPassword}" placeholder="비밀번호"><br>
+    <input type="submit" value="로그인">
+</form>
+</body>
+</html>

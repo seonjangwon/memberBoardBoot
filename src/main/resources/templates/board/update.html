@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script>
+    const update_btn = () =>{
+        let form = new FormData();
+        form.append("id",$("#id").val());
+        form.append("boardTitle",$("#boardTitle").val());
+        form.append("boardWriter",$("#boardWriter").val());
+        form.append("boardContents",$("#boardContents").val());
+        form.append("boardFile",$("#boardFile")[0]);
+        console.log(form.get("boardTitle"));
+
+        $.ajax({
+            type : 'PUT',
+            url : '/board',
+            data: form ,
+            processData: false,
+            contentType: false,
+            enctype:'multipart/form-data',
+            cache: false,
+            timeout: 600000,
+            success: function (result) {
+                console.log(result);
+                location.href=result;
+            },
+            error: function (){
+                alert("아작아작작")
+            }
+       });
+    }
+</script>
+</head>
+<body>
+<h2>게시글 수정</h2>
+<form action="/board" method="post" enctype="multipart/form-data" th:object="${board}">
+    <input type="text" th:field="*{id}" th:value="*{id}">
+    <input type="text" th:field="*{boardTitle}" th:value="*{boardTitle}">
+    <input type="text" id="boardWriter" name="boardWriter" th:value="${session.loginEmail}">
+    <input type="text" th:field="*{boardContents}" th:value="*{boardContents}">
+    <input type="file" th:field="*{boardFile}">
+    <input type="submit" value="수정하기">
+</form>
+<button onclick="update_btn()">수정하기(ajax)</button>
+</body>
+</html>

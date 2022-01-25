@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<p th:text="${member.id}"></p>
+<p th:text="${member.memberEmail}"></p>
+<p th:text="${member.memberPassword}"></p>
+<p th:text="${member.memberName}"></p>
+<p th:text="${member.memberPhone}"></p>
+<img th:src="@{|/upload/${member.memberFilename}|}" alt="사진 실패다요">
+<p th:text="${member.memberTime}"></p>
+<a href="/member/update">수정</a>
+</body>
+</html>

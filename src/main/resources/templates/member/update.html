@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<style>
+    .error-view{
+        color: red;
+    }
+</style>
+</head>
+<body>
+<h2>update</h2>
+<form action="/member/" method="put" th:object="${member}" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}">
+    <div th:if="${#fields.hasGlobalErrors()}">
+        <p class="error-view" th:each="err : ${#fields.globalErrors()}" th:text="${err}" >글로벌 오류</p>
+    </div>
+    <input type="text" th:field="*{memberEmail}" th:value="*{memberEmail}"><br>
+    <input type="text" th:field="*{memberPassword}" placeholder="비밀번호 확인"><br>
+    <input type="text" th:field="*{memberName}" th:value="*{memberName}"><br>
+    <input type="text" th:field="*{memberPhone}" th:value="*{memberPhone}"><br>
+    <input type="file" th:field="*{memberFile}" th:value="*{memberFile}"><br>
+    <input type="submit" value="수정하기">
+</form>
+</body>
+</html>

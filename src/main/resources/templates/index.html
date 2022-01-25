@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>index</h2>
+<div th:if="${session.loginEmail==null}">
+    <a href="/member/save"> 회원가입</a><br>
+    <a href="/member/login">로그인</a><br>
+</div>
+<div th:if="${session.loginEmail!=null}">
+    <a href="/member/logout">로그아웃</a><br>
+    <a th:href="@{|/member/${session.loginEmail}|}">마이페이지</a>
+    <a href="/board/save">게시글 작성</a><br>
+    <a href="/board/">게시글 목록</a><br>
+</div>
+<div th:if="${session.loginEmail == 'admin'}">
+    <a href="/member/admin">관리자</a>
+</div>
+</body>
+</html>

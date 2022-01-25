@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+        const comment_save_btn = () => {
+            let form = $('form[name=comment_save_form]').serialize();
+            const loginEmail = '[[${session.loginEmail}]]'
+            console.log(form);
+            $.ajax({
+                type: 'post',
+                url: '/comment',
+                data: form,
+                dataType: 'JSON',
+                success: function (result) {
+                    console.log(result)
+                    let output = "<table>\n" +
+                        "        <thead>\n" +
+                        "            <tr>\n" +
+                        "                <th>번호</th>\n" +
+                        "                <th>작성자</th>\n" +
+                        "                <th>내용</th>\n" +
+                        "                <th>삭제</th>\n" +
+                        "            </tr>\n" +
+                        "        </thead>\n" +
+                        "        <tbody>\n";
+                    $.each(result, function (i) {
+                        output += "<tr>";
+                        output += "<td>" + (i + 1) + "</td>";
+                        output += "<td>"+ result[i].memberEmail+"</td>";
+                        output += "<td>"+ result[i].commentContents+"</td>";
+                        output += "<td>"+ result[i].commentTime+"</td>";
+                        if(result[i].memberEmail == loginEmail){
+                            output += "<td><button onclick=\"comment_delete_btn("+result[i].id+")\">삭제</button></td>";
+                        } else if (loginEmail == 'admin') {
+                            output += "<td><button onclick=\"comment_delete_btn("+result[i].id+")\">삭제</button></td>";
+                        } else {
+                            output += "<td>삭제못함</td>";
+                        }
+                        output += "</tr>";
+                    })
+                    output += "        </tbody>\n" +
+                        "    </table>";
+                    document.getElementById('comment_view').innerHTML = output;
+                },
+                error: function () {
+                    alert("아작아작아작")
+                }
+
+            });
+        }
+        const comment_delete_btn = (commentId) => {
+            const board = '[[${board.id}]]'
+            $.ajax({
+               type:'delete',
+                url:'/comment',
+                data:{"commentId":commentId},
+                dataType: 'text',
+                success:function (result) {
+                   console.log(result)
+                    location.href="/board/"+board
+                },
+                error: function (){
+                   alert("아작아작아작")
+                }
+            });
+        }
+        const board_delete_btn = (boardId) => {
+            $.ajax({
+                type:'delete',
+                url:'/board',
+                data:{"boardId":boardId},
+                dataType: 'text',
+                success:function (result){
+                    console.log(result)
+                    location.href="/board"
+                },
+                error: function (){
+                    alert("아작아작")
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<h2>findById</h2>
+<table>
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>내용</th>
+        <th>조회수</th>
+        <th>파일</th>
+        <th>작성시간(수정시간)</th>
+        <th>수정</th>
+        <th>삭제</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td th:text="${board.id}"></td>
+        <td th:text="${board.boardTitle}"></td>
+        <td th:text="${board.boardWriter}"></td>
+        <td th:text="${board.boardContents}"></td>
+        <td th:text="${board.boardHits}"></td>
+        <td><img th:src="@{|/upload/${board.boardFilename}|}" alt="사진이 없다요"></td>
+        <td th:text="${board.boardTime}"></td>
+        <td th:switch="${session.loginEmail}">
+            <p th:case="${board.boardWriter}"><a th:href="@{|/board/update/${board.id}|}">수정</a></p>
+            <p th:case="*">수정못함</p>
+        </td>
+        <td th:switch="${session.loginEmail}">
+            <p th:case="${board.boardWriter}"><button th:onclick="board_delete_btn([[${board.id}]])">삭제</button></p>
+            <p th:case="admin"><button th:onclick="board_delete_btn([[${board.id}]])">삭제</button></p>
+            <p th:case="*">삭제못함</p>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form action="/comment" name="comment_save_form" method="post" th:object="${commentSave}">
+    <input type="hidden" name="boardId" th:value="${board.id}">
+    <input type="text" name="memberEmail" id="memberEmail" th:value="${session.loginEmail}" readonly>
+    <input type="text" th:field="*{commentContents}" placeholder="댓글 내용">
+</form>
+<button onclick="comment_save_btn()">댓글 작성</button>
+<div id="comment_view">
+    <table>
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>작성자</th>
+            <th>내용</th>
+            <th>삭제</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="comment, i : ${comment}">
+            <td th:text="${i.index+1}"></td>
+            <td th:text="${comment.memberEmail}"></td>
+            <td th:text="${comment.commentContents}"></td>
+            <td th:text="${comment.commentTime}"></td>
+            <td th:switch="${session.loginEmail}">
+                <p th:case="${comment.memberEmail}"><button th:onclick="comment_delete_btn([[${comment.id}]])">삭제</button></p>
+                <p th:case="admin"><button th:onclick="comment_delete_btn([[${comment.id}]])">삭제</button></p>
+                <p th:case="*">삭제못함</p>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
